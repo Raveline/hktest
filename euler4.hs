@@ -1,3 +1,12 @@
+listFactors :: [Int]
+listFactors = listFactors' 100 100
+    where   listFactors' :: Int -> Int -> [Int]
+            listFactors' x y
+                | x == 999 && y == 999 = [x*y]
+                | y == 999 = x*y:listFactors' (x+1) (x+1)
+                | otherwise = x*y:listFactors' x (y+1) 
+
+
 listPalindromes :: [Int]
 listPalindromes = euler4' 999 999
     where
