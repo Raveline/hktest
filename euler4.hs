@@ -9,7 +9,7 @@ listPalindromes = euler4' 999 999
             | otherwise = euler4' 999 (y-1)
         
         isPalindrome :: Int -> Bool
-        isPalindrome n = show n == reverse (show n) && length(show n) > 1
+        isPalindrome n = show n == reverse (show n)
 
 euler4 :: Int
 euler4 = maximum(listPalindromes)
