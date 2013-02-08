@@ -1,10 +1,10 @@
+import qualified Data.Map as Map 
+
 euler5 :: Int
-euler5 = powersOf(countMaxExponent(allPrimeFactorsBetween 2 20))
+euler5 = powersOf(countMaxExponent(allPrimeFactorsTo 20))
     where
-    allPrimeFactorsBetween :: Int -> Int -> [[Int]]
-    allPrimeFactorsBetween min max 
-        | min < max = primeFactors(min):allPrimeFactorsBetween (min+1) max
-        | min == max = [primeFactors(min)]
+    allPrimeFactorsTo :: Int -> [[Int]]
+    allPrimeFactorsTo max = [primeFactors(x)|x <- [2..max]]
         where
             primeFactors :: Int -> [Int]
             primeFactors n
@@ -13,22 +13,14 @@ euler5 = powersOf(countMaxExponent(allPrimeFactorsBetween 2 20))
                 where
                     firstPrime = [x|x<-[2..n `div` 2], n `mod` x == 0]
 
-    countMaxExponent :: [[Int]] -> [(Int, Int)]
-    countMaxExponent xs = countMaxExponentFor xs [2..20]
-        where 
-            countMaxExponentFor :: [[Int]] -> [Int] -> [(Int, Int)]
-            countMaxExponentFor xs [y] = [tupleWithExpAndCount xs y] 
-            countMaxExponentFor xs (y:ys) = tupleWithExpAndCount xs y:countMaxExponentFor xs ys
-
-            tupleWithExpAndCount :: [[Int]] -> Int -> (Int, Int)
-            tupleWithExpAndCount xs y = (y, maximum(map (countItem y) xs))
-
-            countItem :: Int -> [Int] -> Int
-            countItem n xs = length (filter (== n) xs)
-
-    powersOf :: [(Int,Int)] -> Int
-    powersOf [] = 0
-    powersOf xs = foldr(*) 1 (map(powerOf) xs)
-        where 
-            powerOf :: (Int,Int) -> Int
-            powerOf (x,y) = x^y
+countMaxExponent :: [[Int]] -> Map.Map Int Int
+countMaxExponent xs = Map.fromList(zip [1..20] [maximum(map(countItem y) x)|x <- [xs], y <- [1..20]])
+    where
+        countItem :: Int -> [Int] -> Int
+        countItem y xs = length(filter(== y) xs)
+           
+powersOf :: Map.Map Int Int -> Int
+powersOf xs = Map.foldWithKey f 1 xs
+    where
+        f :: Int -> Int -> Int -> Int
+        f k v r = r*(k^v)
